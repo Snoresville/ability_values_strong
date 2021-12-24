@@ -14,8 +14,21 @@ function booster:OnCreated(event)
 		self.hero_kill_gain = BUTTINGS.HERO_KILL_GAIN or 25
 		self.creep_kill_gain = BUTTINGS.CREEP_KILL_GAIN or 25
 	end
+	self:StartIntervalThink(1)
 	
 	self.multiplier = 1
+end
+
+function booster:OnIntervalThink()
+	if not IsServer() then
+		return
+	end
+	for i = 0, 30 do
+		local ability = self:GetParent():GetAbilityByIndex(i)
+		if ability and not ability:IsNull() and ability:GetLevel() > 0 then
+			ability:RefreshIntrinsicModifier()
+		end
+	end
 end
 
 function booster:GetAttributes()
@@ -54,7 +67,7 @@ function booster:OnDeath(event)
 	if event.unit:IsOther() then return end -- denying wards bad
 	--if not event.unit:IsHero() then return end
 	
-	if event.unit:IsHero() then
+	if event.unit:IsHero() and not event.unit:IsIllusion() then
 		self:SetStackCount(self:GetStackCount() + self.hero_kill_gain)
 	else
 		self:SetStackCount(self:GetStackCount() + self.creep_kill_gain)
