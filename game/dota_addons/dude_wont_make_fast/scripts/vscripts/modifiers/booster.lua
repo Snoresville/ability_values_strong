@@ -90,7 +90,13 @@ function booster:GetModifierOverrideAbilitySpecialValue( params )
 	local szAbilityName = params.ability:GetAbilityName() 
 	local szSpecialValueName = params.ability_special_value
 	local nSpecialLevel = params.ability_special_level
-
+	
 	local flBaseValue = params.ability:GetLevelSpecialValueNoOverride( szSpecialValueName, nSpecialLevel )
+	if szSpecialValueName == "AbilityCooldown" or szSpecialValueName == "AbilityManaCost" or szSpecialValueName == "AbilityChargeRestoreTime" then
+		return flBaseValue
+	end
+
+	print(szSpecialValueName)
+
 	return flBaseValue + flBaseValue * self.multiplier * self:GetStackCount() / 100
 end
